@@ -1,3 +1,4 @@
+
 <html>
 <head>
 <title>Home</title>
@@ -92,8 +93,105 @@
 				<tr>
 				  <td>
 					
-						Pagina Lucas EEspinal analista DevOps
-						
+						Pagina Lucas Espinal analista DevOps
+						Reto DevOps Lucas espinal Monsalve
+
+Primero realice la instalaci¢n de sonarqube y sonar scanner de manera manual y luego de verificar que funciona cree el archivo automatizacionsonar.sh en la ruta /var/www con los comandos utilizados
+
+Ingreso al servidor develop ip 35.197.14.52 mediante emulador myExtra autenticaci¢n ssh protocolo ftp
+
+De ah¡ me conecto al servidor deployment ip 35.186.165.124 usuario server clave  ssh id_rsa_server
+
+Me autentico como sudo su para tener permisos de root comando sudo su
+
+Descargo sonarqube version 5.6.4.zip con el comando wget
+wget https://sonarsource.bintray.com/Distribution/sonarqube/sonarqube-5.6.4.zip
+
+Descargar sonar-scanner versi¢n 3.0.3 
+wget https://sonarsource.bintray.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-3.0.3.778-linux.zip
+
+Instalo unzip para descomprimir los zip descargados: sudo apt-get install zip unzip en la ruta /home/server
+
+La descomprimo sonarqube version 5.6.4.zip en la ruta /var/www
+
+Deben quedar las dos carpetas  -  sonarqube-5.6.4  sonarqube-5.6.4.zip
+
+Ingreso a la carpeta sonarqube-5.6.4/conf ah¡ debe existir un archivo sonar.properties  
+
+Con el comendo nano lo abro y lo edito quitandole el comentario de las siguientes l¡neas :
+
+?	sonar.embeddedDatabase.port=9092 : con esto podremos utilizar la base de datos embebida H2 que trae por defecto.
+
+?	sonar.web.port=9000
+
+?	sonar.web.host=0.0.0.0
+
+?	sonar.web.context=/sonar
+ 
+Ingreso a la carpeta sonar-scanner-3.0.3.778-linux/conf configuro el archivo sonar-scanner.properties y le quito el comentario de las siguientes l¡neas:
+
+?	sonar.host.url=http://localhost:9000
+?	sonar.sourceEncoding=UTF-8
+?	sonar.login=admin
+?	sonar.password=admin
+
+Luego de esto, voy a la carpeta sonarqube-5.6.4/bin/linux-x86-64 y subo el servidor de sonar con el comendo sudo sh sonar.sh start, luego de esto le doy el comando sudo sh sonar.sh status con el cual verifico que este corriendo correctamente, debe decirme SonarQube is running
+
+Voy al navegador web y digito la ip del servidor Deployment : puerto 9000 /sonar y con esto verifico que me est‚ cargando la consola de mando de sonar.
+
+Me autentico en el server Develop 35.197.14.52
+
+Creo en Github (gestor de c¢digo fuente) un repositorio llamado retodevops el cual me asigna una Url.
+
+Luego con el comando mkdir creo en develop una carpeta llamada repolocallucas (ubicada en /home/user3) y clono ah¡ el repositorio con git clone (autom ticamente me hace el git remote add origin https?) y me traigo lo que tenga ah¡, en este caso est  vac¡o, no trae nada.
+
+Luego en esta carpeta copio los archivos de mi proyecto (lucas.html mi p gina web) y con git add, git commit y git push interactu¢ con el repositorio local en github subiendo componentes de software y con git pull descargo a mi repositorio local lo que tengo en mi repositorio remoto.
+
+Subiendo mis cambios 
+Luego al darle git commit me sale un mensaje que me pide configurar el correo y usuario con el que se cre¢ el repositorio en github, se realiza, anexo imagen.
+
+user3@instance-develop-p8rh:~/repolocallucas/retodevops$ git config user.email "lucas.espinal@gmail.com" 
+user3@instance-develop-p8rh:~/repolocallucas/retodevops$ git config user.name "lucasespinal"
+user3@instance-develop-p8rh:~/repolocallucas/retodevops$ git commit -m "mi prim                            er commit, subiendo mipagina web al repositorio remoto-lucas espinal"[master (root-commit) 551ca2b] mi primer commit, subiendo mipagina web al repositorio remoto-lucas espinal
+1 file changed, 139 insertions(+)
+create mode 100644 lucas.htmluser3@instance-develop-p8rh:~/repolocallucas/retodevops$
+
+Luego subo mis componentes a la rama master con el comando git push origin master
+Me pide autenticarme con las credenciales de github
+Username for 'https://github.com': lucasespinal
+Password for 'https://lucasespinal@github.com'
+
+Voy a mi repositorio en github y veo reflejados los cambios en que acabo de subir
+
+Se agrega el usuario davidpolaniaac en github para que esta persona pueda tener acceso al proyecto y colaborar con ‚l.
+
+Luego me autentico en el servidor Deployment 35.186.165.124
+
+Creo en /var/www/html un directorio llamado repodeploylucas el cual ser  un repositorio que conectare con mi repositorio github para poder interactuar con mis artefactos de software entre las m quinas de mi ecosistema.
+
+Instalo git para Ubuntu en deployment y verifico la versi¢n con git -version
+ 
+Luego tal como hice en la m quina develop realizo un git clone de mi repositorio remoto el cual ya tiene mis artefactos del proyecto.
+  
+Verifico y ya tengo en mi servidor deployment mis artefactos del proyecto
+
+Creo el archivo sonar-project.properties en la ra¡z de mi carpeta donde contengo los artefactos y configuro las siguientes l¡neas:
+
+sonar.projectKey=lucas.html
+sonar.projectName=lucas.html
+sonar.projectVersion=1.0
+sonar.sources=lucas.html
+sonar.sourceEncoding=UTF-8
+sonar.my.property=value
+
+Luego de esto me ubico en la ruta /var/www/ sonar-scanner-3.0.3.778-linux/bin  y ejecuto el siguiente comando al cual escaneo los proyectos que tengo para poder realizarles el an lisis estatico de codigo en sonar y conocer el estado de salud de mis desarrollos:
+
+sudo sh /var/www/sonar-scanner-3.0.3.778-linux/bin/sonar-scanner
+
+An lisis en ejecuci¢n
+Finaliza correctamente el an lisis 
+Luego de esto voy a la consola de mando de sonar y actualizo la p gina, encontrando el an lisis de mi componente lucas.html
+Luego de esto en develop realizo cambios en mi p gina web (agrego el detalle de como aborde mi reto hasta el momento) y lo subo a github, luego desde deployment hago un git pull y descargo los componentes actualizados y puedo analizarlos en sonar con los cambios que se hicieron en develop.
 					
 				</tr>
 		  		</table></td>
@@ -107,7 +205,7 @@
 				
 						<span class="bold">Descripcion del desarrollo del reto DevOps :</span>
 					
-						Primero se debe realizar el script de automatizacion de la instalacion de sonarqube y sonar scanner 	
+						Descripcion 	
 						
 						</td>
 				</tr>
